@@ -6,6 +6,9 @@
  * Copyright: (c) 2005 by OBJECTIVE DEVELOPMENT Software GmbH
  * License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
  * This Revision: $Id: usbdrv.h 769 2009-08-22 11:49:05Z cs $
+ * Further modification by Noah Baker for Compatibility with Digispark 2/27/2015
+ * Tested on attiny85, variants should theoretically work
+ * updated for new gcc
  */
 
 #ifndef __usbdrv_h_included__
@@ -493,43 +496,43 @@ extern volatile schar   usbRxLen;
 #ifndef __ASSEMBLER__
 extern
 #if !(USB_CFG_DESCR_PROPS_DEVICE & USB_PROP_IS_RAM)
-PROGMEM
+const PROGMEM
 #endif
 char usbDescriptorDevice[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_CONFIGURATION & USB_PROP_IS_RAM)
-PROGMEM
+const PROGMEM
 #endif
 char usbDescriptorConfiguration[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_HID_REPORT & USB_PROP_IS_RAM)
-PROGMEM
+const PROGMEM
 #endif
 char usbDescriptorHidReport[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_0 & USB_PROP_IS_RAM)
-PROGMEM
+const PROGMEM
 #endif
 char usbDescriptorString0[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_VENDOR & USB_PROP_IS_RAM)
-PROGMEM
+const PROGMEM
 #endif
 int usbDescriptorStringVendor[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_PRODUCT & USB_PROP_IS_RAM)
-PROGMEM
+const PROGMEM
 #endif
 int usbDescriptorStringDevice[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER & USB_PROP_IS_RAM)
-PROGMEM
+const PROGMEM
 #endif
 int usbDescriptorStringSerialNumber[];
 
