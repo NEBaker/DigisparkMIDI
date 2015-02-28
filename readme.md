@@ -1,6 +1,6 @@
-# UsbMidiAttiny45in3
+# DigisparkMIDI
 
-##This is a fork of UsbMidiAttiny45in3 by tadfmac. It is intended for use on the Digispark attiny85 based boards (including the Olimex OLIMEXINO - 85). Thanks to Sam Jaffe for the inital dev board! Documentation and an example will be updated soon.
+##This is a fork of UsbMidiAttiny45in3 by tadfmac. It is intended for use on the Digispark attiny85 based boards (including the Olimex OLIMEXINO-85). Thanks to Sam Jaffe for the inital dev board! Documentation and an example will be updated soon.
 
 This is a simple Arduino [V-USB](http://www.obdev.at/products/vusb/index.html) MIDI library for ATTiny45/85/44/84.
 
