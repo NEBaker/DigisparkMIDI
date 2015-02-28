@@ -1,5 +1,6 @@
 /*
-
+ * Further modification by Noah Baker for Compatibility with Digispark 2/27/2015
+ * Tested on attiny85, variants should theoretically work
 based : 
 
 - V-USB by Objective Development Software GmbH
@@ -38,7 +39,7 @@ typedef uint8_t byte;
 // Appendix B. Example: Simple MIDI Adapter (Informative)
 // B.1 Device Descriptor
 //
-static PROGMEM char deviceDescrMIDI[] = {	/* USB device descriptor */
+const PROGMEM char deviceDescrMIDI[] = {	/* USB device descriptor */
 	18,			/* sizeof(usbDescriptorDevice): length of descriptor in bytes */
 	USBDESCR_DEVICE,	/* descriptor type */
 	0x10, 0x01,		/* USB version supported */
@@ -56,7 +57,7 @@ static PROGMEM char deviceDescrMIDI[] = {	/* USB device descriptor */
 };
 
 // B.2 Configuration Descriptor
-static PROGMEM char configDescrMIDI[] = {	/* USB configuration descriptor */
+const PROGMEM char configDescrMIDI[] = {	/* USB configuration descriptor */
 	9,			/* sizeof(usbDescrConfig): length of descriptor in bytes */
 	USBDESCR_CONFIG,	/* descriptor type */
 	101, 0,			/* total length of data returned (including inlined descriptors) */
@@ -372,6 +373,21 @@ public:
 		buffer[2] = 0x7f & note;
 		buffer[3] = 0;
 		sendMidiMessage(buffer,4);
+	}
+	
+	void sendAftertouch(byte ch, byte note, byte value){
+		buffer[0] = 0x0A;
+		buffer[1] = 0xA0 | ch;
+		buffer[2] = 0x7f & note;
+		buffer[3] = 0x7f & value;
+		sendMidiMessage(buffer,4);
+	}
+	
+	void sendChannelPressure(byte ch, byte value){
+		buffer[0] = 0x0D;
+		buffer[1] = 0xD0 | ch;
+		buffer[2] = 0x7f & value;
+		sendMidiMessage(buffer,3);
 	}
 
 	void sendCtlChange(byte ch, byte num, byte value){
