@@ -6,6 +6,8 @@
  * Copyright: (c) 2005 by OBJECTIVE DEVELOPMENT Software GmbH
  * License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
  * This Revision: $Id: usbconfig-prototype.h 767 2009-08-22 11:39:22Z cs $
+ * Further modification by Noah Baker for Compatibility with Digispark 2/27/2015
+ * Tested on attiny85, variants should theoretically work
  */
 
 #ifndef __usbconfig_h_included__
@@ -47,15 +49,30 @@ section at the end of this file).
 #if defined (__AVR_ATtiny25__) || defined (__AVR_ATtiny45__) || defined (__AVR_ATtiny85__) 
 
 #define USB_CFG_IOPORTNAME      B
-#define USB_CFG_DMINUS_BIT      2
-#define USB_CFG_DPLUS_BIT       1
+#define USB_CFG_DMINUS_BIT      3
+#define USB_CFG_DPLUS_BIT       4
 
 #elif defined (__AVR_ATtiny24__) || defined (__AVR_ATtiny44__) || defined (__AVR_ATtiny84__) 
 
-#define USB_CFG_IOPORTNAME      A
-#define USB_CFG_DMINUS_BIT      0
-#define USB_CFG_DPLUS_BIT       1
+#define USB_CFG_IOPORTNAME      B
+#define USB_CFG_DMINUS_BIT      1
+#define USB_CFG_DPLUS_BIT       2
 
+#elif defined (__AVR_ATtiny87__) || defined (__AVR_ATtiny167__)
+#define USB_CFG_IOPORTNAME      B
+#define USB_CFG_DMINUS_BIT      3
+#define USB_CFG_DPLUS_BIT       6
+
+#elif defined (__AVR_ATtiny461__) || defined (__AVR_ATtiny861__)
+#define USB_CFG_IOPORTNAME      B
+#define USB_CFG_DMINUS_BIT      5
+#define USB_CFG_DPLUS_BIT       6
+#else
+
+/*	ATtiny2313, ATmega8/48/88/168	*/
+#define USB_CFG_IOPORTNAME      D
+#define USB_CFG_DMINUS_BIT      3
+#define USB_CFG_DPLUS_BIT       2
 #endif
 
 #define USB_CFG_CLOCK_KHZ       (F_CPU/1000)
@@ -109,7 +126,7 @@ section at the end of this file).
  * Since the token is toggled BEFORE sending any data, the first packet is
  * sent with the oposite value of this configuration!
  */
-#define USB_CFG_IMPLEMENT_HALT          1
+#define USB_CFG_IMPLEMENT_HALT          0
 /* Define this to 1 if you also want to implement the ENDPOINT_HALT feature
  * for endpoint 1 (interrupt endpoint). Although you may not need this feature,
  * it is required by the standard. We have made it a config option because it
@@ -132,7 +149,7 @@ section at the end of this file).
 /* Define this to 1 if the device has its own power supply. Set it to 0 if the
  * device is powered from the USB bus.
  */
-#define USB_CFG_MAX_BUS_POWER           500
+#define USB_CFG_MAX_BUS_POWER           100
 /* Set this variable to the maximum USB bus power consumption of your device.
  * The value is in milliamperes. [It will be divided by two since USB
  * communicates power requirements in units of 2 mA.]
@@ -172,6 +189,8 @@ section at the end of this file).
  * proceed, do a return after doing your things. One possible application
  * (besides debugging) is to flash a status LED on each packet.
 */
+
+/*
 #ifndef __ASSEMBLER__
 #ifdef __cplusplus
 extern "C"{
@@ -182,6 +201,9 @@ extern void hadUsbReset(void);
 #endif
 #endif
 #define USB_RESET_HOOK(resetStarts)     if(!resetStarts){hadUsbReset();} 
+*/
+
+
 /* This macro is a hook if you need to know when an USB RESET occurs. It has
  * one parameter which distinguishes between the start of RESET state and its
  * end.
@@ -257,11 +279,11 @@ extern void hadUsbReset(void);
  * with libusb: 0x16c0/0x5dc.  Use this VID/PID pair ONLY if you understand
  * the implications!
  */
-#define USB_CFG_DEVICE_VERSION  0x01, 0x00
+#define USB_CFG_DEVICE_VERSION  0x00, 0x01
 /* Version number of the device: Minor number first, then major number.
  */
-#define USB_CFG_VENDOR_NAME     't','a','-','m','u','s','i','c','.','n','e','t'
-#define USB_CFG_VENDOR_NAME_LEN 12
+#define USB_CFG_VENDOR_NAME     'B','a','k','e','r',' ','T','e','c','h'
+#define USB_CFG_VENDOR_NAME_LEN 10
 /* These two values define the vendor name returned by the USB device. The name
  * must be given as a list of characters under single quotes. The characters
  * are interpreted as Unicode (UTF-16) entities.
@@ -270,8 +292,8 @@ extern void hadUsbReset(void);
  * obdev's free shared VID/PID pair. See the file USB-IDs-for-free.txt for
  * details.
  */
-#define USB_CFG_DEVICE_NAME     'M','i','d','i','-','D','e','v','i','c','e'
-#define USB_CFG_DEVICE_NAME_LEN 11
+#define USB_CFG_DEVICE_NAME     'B','a','k','e','r','_','M','I','D','I'
+#define USB_CFG_DEVICE_NAME_LEN 10
 /* Same as above for the device name. If you don't want a device name, undefine
  * the macros. See the file USB-IDs-for-free.txt before you assign a name if
  * you use a shared VID/PID.
@@ -386,22 +408,22 @@ extern void hadUsbReset(void);
 #if defined (__AVR_ATtiny25__) || defined (__AVR_ATtiny45__) || defined (__AVR_ATtiny85__) 
 
 #define USB_INTR_CFG            PCMSK
-#define USB_INTR_CFG_SET        (1 << PCINT1)
-#define USB_INTR_CFG_CLR        0
-#define USB_INTR_ENABLE         GIMSK
+#define USB_INTR_CFG_SET        (1 << USB_CFG_DMINUS_BIT)
+//#define USB_INTR_CFG_CLR        0
+//#define USB_INTR_ENABLE         GIMSK
 #define USB_INTR_ENABLE_BIT     PCIE
-#define USB_INTR_PENDING        GIFR
+//#define USB_INTR_PENDING        GIFR
 #define USB_INTR_PENDING_BIT    PCIF
 #define USB_INTR_VECTOR         SIG_PIN_CHANGE
 
 #elif defined (__AVR_ATtiny24__) || defined (__AVR_ATtiny44__) || defined (__AVR_ATtiny84__) 
 
 #define USB_INTR_CFG            PCMSK0
-#define USB_INTR_CFG_SET        (1 << PCINT1)
-#define USB_INTR_CFG_CLR        0
-#define USB_INTR_ENABLE         GIMSK
+#define USB_INTR_CFG_SET        (1 << USB_CFG_DMINUS_BIT)
+//#define USB_INTR_CFG_CLR        0
+//#define USB_INTR_ENABLE         GIMSK
 #define USB_INTR_ENABLE_BIT     PCIE0
-#define USB_INTR_PENDING        GIFR
+//#define USB_INTR_PENDING        GIFR
 #define USB_INTR_PENDING_BIT    PCIF0
 #define USB_INTR_VECTOR         SIG_PIN_CHANGE0
 
